@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Art History 250 | Gallery</title>
+    <style>
+        /* 极简主义设计系统 */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1d1d1f;
+            --secondary-text: #86868b;
+            --card-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* 网格排布 */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 单个作品卡片 */
+        .artwork-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .image-container {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: var(--card-radius);
+            background-color: #f5f5f7;
+        }
+
+        .artwork-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .artwork-info {
+            padding: 15px 5px;
+        }
+
+        .artwork-id {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            margin-bottom: 5px;
+        }
+
+        .artwork-title {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* 悬停动效：高级感的关键 */
+        .artwork-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .artwork-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .artwork-card:hover .artwork-title {
+            color: #0071e3; /* 苹果风格的蓝色激活色 */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>AP Art History 250</h1>
+    <p style="color: #86868b;">Exploring 250 Masterpieces of Global Art History</p>
+</header>
+
+<main class="gallery-grid">
+    
+    <a href="./posts/westminster.html" class="artwork-card">
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1543736560-6477cc72803b?auto=format&fit=crop&q=80&w=800" alt="Palace of Westminster">
+        </div>
+        <div class="artwork-info">
+            <div class="artwork-id">#112</div>
+            <div class="artwork-title">Palace of Westminster (Houses of Parliament)</div>
+        </div>
+    </a>
+
+    <a href="./posts/kahlo.html" class="artwork-card">
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800" alt="Frida Kahlo">
+        </div>
+        <div class="artwork-info">
+            <div class="artwork-id">#140</div>
+            <div class="artwork-title">The Two Fridas (Las dos Fridas)</div>
+        </div>
+    </a>
+
+    </main>
+
+</body>
+</html>
