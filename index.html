@@ -3,95 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APAH 250 Progress</title>
+    <title>AP Art History 250 Tracker</title>
     <style>
-        :root { --bg: #ffffff; --text: #1d1d1f; --gray: #86868b; --accent: #000000; }
-        body { font-family: -apple-system, sans-serif; margin: 0; padding: 40px 20px; background: var(--bg); }
-        
-        /* 进度条样式 */
-        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 8px; background: #eee; z-index: 1000; }
-        #progressBar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s; }
-        .stats { font-family: "Georgia", serif; font-style: italic; font-size: 1.2rem; margin-bottom: 30px; }
-
-        .container { max-width: 1100px; margin: 0 auto; }
-        .section-title { border-bottom: 1px solid #eee; padding-bottom: 10px; margin: 50px 0 25px; font-size: 1.1rem; font-weight: 600; }
-        
-        /* 紧凑型画廊网格 */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
-        
-        .card { text-decoration: none; color: inherit; font-size: 0.75rem; text-align: center; }
-        .img-box { 
-            width: 100%; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 4px; 
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-            background: #fafafa; transition: all 0.2s;
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --done-color: #2ecc71;
+            --text-main: #2c3e50;
         }
-        .card.done .img-box { border: none; background: #eee; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .not-found { color: #ccc; font-size: 0.6rem; padding: 10px; }
-        
-        .card:hover .img-box { transform: scale(1.05); border-color: #000; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        /* 顶部内容区块 */
+        .header-section {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            text-align: center;
+        }
+
+        /* 1. 标题 */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        /* 2. 介绍 */
+        .description {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* 3. 计数器 */
+        .counter-box {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        /* 4. 进度条 */
+        .progress-wrapper {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar-bg {
+            height: 14px;
+            background: #eee;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        #progressBar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            transition: width 1s ease-in-out;
+        }
+
+        .percent-text {
+            font-size: 0.9rem;
+            color: #95a5a6;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* 5. 作品列表 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .unit-section {
+            margin-bottom: 60px;
+        }
+
+        .unit-title {
+            font-size: 1.6rem;
+            border-bottom: 3px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: #34495e;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card.done {
+            border-color: var(--done-color);
+            background: #fdfdfd;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            overflow: hidden;
+            font-weight: bold;
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+
+        .img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .art-id {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .art-title {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
 
-<div class="progress-container"><div id="progressBar"></div></div>
+    <div class="header-section">
+        <h1>AP Art History 250</h1>
+        
+        <p class="description">
+            这是一个用于追踪 AP Art History 250 件核心作品复习进度的仪表盘。
+            当你为作品添加了笔记和图片后，对应的方块将会亮起。
+        </p>
 
-<div class="container">
-    <div class="stats" id="counter">0/250</div>
-    <h1 style="font-family: serif; font-size: 2.2rem;">Overview</h1>
+        <div class="counter-box" id="counter">0 / 250</div>
 
-    <div id="sections"></div>
-</div>
+        <div class="progress-wrapper">
+            <div class="progress-bar-bg">
+                <div id="progressBar"></div>
+            </div>
+            <div class="percent-text" id="percent">0% Completed</div>
+        </div>
+    </div>
 
-<script>
-    // 数据示例：增加 category 字段
-    const artworks = [
-        { id: "001", title: "Apollo 11 stones", cat: "Global Prehistory", img: "" },
-        { id: "008", title: "Stonehenge", cat: "Global Prehistory", img: "https://example.com/stonehenge.jpg" },
-        { id: "028", title: "Peplos Kore", cat: "Ancient Mediterranean", img: "" },
-        { id: "112", title: "Westminster", cat: "Early Europe", img: "https://example.com/westminster.jpg" }
-    ];
+    <div class="main-content" id="mainContent"></div>
 
-    const categories = [
-        "Global Prehistory", 
-        "Ancient Mediterranean", 
-        "Early Europe and Colonial Americas"
-    ];
+    <script src="data.js"></script>
 
-    function render() {
-        const sectionsWrap = document.getElementById('sections');
-        let completed = 0;
+    <script>
+        function init() {
+            const container = document.getElementById('mainContent');
+            let completed = 0;
 
-        const html = categories.map(cat => {
-            const items = artworks.filter(a => a.cat === cat);
-            const cardsHtml = items.map(art => {
-                const isDone = art.img !== ""; // 如果有图片链接，视为已完成
-                if (isDone) completed++;
-                
+            // 获取所有单元名称
+            const units = [...new Set(artworkUnitData.map(item => item.unit))];
+
+            const sectionsHtml = units.map(unitName => {
+                const artworks = artworkUnitData.filter(a => a.unit === unitName);
+                const cardsHtml = artworks.map(art => {
+                    const isDone = art.img && art.img !== "";
+                    if (isDone) completed++;
+                    return `
+                        <a href="./posts/${art.id}.html" class="card ${isDone ? 'done' : ''}">
+                            <div class="img-placeholder">
+                                ${isDone ? `<img src="${art.img}" alt="${art.title}">` : art.id}
+                            </div>
+                            <div class="art-id">#${art.id}</div>
+                            <div class="art-title">${art.title}</div>
+                        </a>
+                    `;
+                }).join('');
+
                 return `
-                    <a href="./posts/${art.id}.html" class="card ${isDone ? 'done' : ''}">
-                        <div class="img-box">
-                            ${art.img ? `<img src="${art.img}">` : `<span class="not-found">Not Yet Found</span>`}
-                        </div>
-                    </a>
+                    <section class="unit-section">
+                        <h2 class="unit-title">${unitName}</h2>
+                        <div class="grid">${cardsHtml}</div>
+                    </section>
                 `;
             }).join('');
 
-            return `
-                <div class="section-title">${cat}</div>
-                <div class="grid">${cardsHtml}</div>
-            `;
-        }).join('');
+            container.innerHTML = sectionsHtml;
 
-        sectionsWrap.innerHTML = html;
-        
-        // 更新进度条和数字
-        const percent = (completed / 250) * 100;
-        document.getElementById('progressBar').style.width = percent + "%";
-        document.getElementById('counter').innerText = `${completed}/250`;
-    }
+            // 更新进度条和计数器
+            const total = artworkUnitData.length;
+            const percentage = Math.round((completed / total) * 100);
+            
+            document.getElementById('counter').innerText = `${completed} / ${total}`;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('percent').innerText = `${percentage}% 复习进度`;
+        }
 
-    render();
-</script>
+        window.onload = init;
+    </script>
 </body>
 </html>
