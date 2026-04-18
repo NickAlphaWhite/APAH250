@@ -1,242 +1,358 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AP Art History 250 Tracker</title>
+    <title>APAH 250 Hunt | Digital Database</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --done-color: #2ecc71;
-            --text-main: #2c3e50;
+            /* Apple 主题色 */
+            --primary-text: #1d1d1f;
+            --secondary-text: #86868b;
+            --bg-color: #f5f5f7;
+            --card-bg: rgba(255, 255, 255, 0.65); /* 毛玻璃基础色 */
+            --done-accent: #0071e3; /* Apple Blue */
+            --border-color: #d2d2d7;
+            
+            /* 弥散光颜色 (参考图 2 的彩色氛围) */
+            --aura-cyan: rgba(0, 255, 255, 0.15);
+            --aura-purple: rgba(160, 32, 240, 0.1);
+            --aura-pink: rgba(255, 192, 203, 0.15);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
+            color: var(--primary-text);
             margin: 0;
-            padding: 20px;
-            color: var(--text-main);
+            padding: 0;
+            overflow-x: hidden;
+            letter-spacing: -0.01em;
         }
 
-        /* 顶部内容区块 */
-        .header-section {
-            max-width: 800px;
-            margin: 0 auto 50px auto;
-            text-align: center;
+        /* --- 核心动态：背景弥散光晕 (参考图 2) --- */
+        .aura-background {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2;
+            overflow: hidden;
         }
 
-        /* 1. 标题 */
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #1a1a1a;
+        .aura-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px); /* 强力模糊形成弥散感 */
+            opacity: 0;
+            animation: auraFadeIn 2s ease-out forwards, auraFloat 20s infinite linear;
         }
 
-        /* 2. 介绍 */
-        .description {
-            font-size: 1.1rem;
-            color: #7f8c8d;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .aura-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--aura-cyan); animation-delay: 0s; }
+        .aura-2 { bottom: -15%; right: -5%; width: 60vw; height: 60vw; background: var(--aura-purple); animation-delay: 1s; }
+        .aura-3 { top: 40%; left: 50%; width: 40vw; height: 40vw; background: var(--aura-pink); animation-delay: 2s; }
+
+        @keyframes auraFadeIn { to { opacity: 1; } }
+        @keyframes auraFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 30px) scale(0.9); }
         }
 
-        /* 3. 计数器 */
-        .counter-box {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        /* 4. 进度条 */
-        .progress-wrapper {
+        /* --- 主容器：毛玻璃质感 (参考图 2) --- */
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto;
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(20px) saturate(180%); /* 核心毛玻璃 */
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 60px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        /* 1. 标题 (极简 Apple 风) */
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin: 0 0 25px 0;
+            letter-spacing: -0.02em;
+        }
+
+        /* 2. 介绍 (纯净文本) */
+        .description {
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--secondary-text);
+            margin-bottom: 50px;
+            max-width: 750px;
+        }
+
+        .description a {
+            color: var(--done-accent);
+            text-decoration: none;
+        }
+        .description a:hover { text-decoration: underline; }
+
+        /* 3. 计数器 & 4. 进度条 (Apple 电池电量/下载条风格) */
+        .progress-section {
+            margin-bottom: 60px;
+            max-width: 600px;
+        }
+
+        .progress-text {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--secondary-text);
+            margin-bottom: 12px;
+            font-variant-numeric: tabular-nums; /* 保持数字对齐 */
+        }
+
+        .progress-text .highlight {
+            color: var(--primary-text);
         }
 
         .progress-bar-bg {
-            height: 14px;
-            background: #eee;
-            border-radius: 7px;
+            height: 6px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 3px;
             overflow: hidden;
+            position: relative;
         }
 
         #progressBar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
-            transition: width 1s ease-in-out;
+            background-color: var(--primary-text); /* 初始为黑色 */
+            border-radius: 3px;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1), background-color 1s ease;
+            position: relative;
+        }
+        
+        /* 进度条：已完成部分的彩色呼吸灯效果 */
+        #progressBar::after {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, #00fff7, #9d00ff, #ff00ea);
+            background-size: 200% 100%;
+            opacity: 0; /* 初始隐藏 */
+            transition: opacity 1s ease;
+            animation: progressGlow 3s linear infinite;
+        }
+        
+        /* 当有进度时激活彩色 */
+        #progressBar.active { background-color: transparent; }
+        #progressBar.active::after { opacity: 0.6; }
+
+        @keyframes progressGlow {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .percent-text {
-            font-size: 0.9rem;
-            color: #95a5a6;
-            margin-top: 10px;
+        /* 5.作品展示区域 */
+        h2.overview-title {
+            font-size: 28px;
             font-weight: 600;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
         }
 
-        /* 5. 作品列表 */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
+        .unit-section { margin-bottom: 50px; }
+
+        .unit-header {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--secondary-text);
+            font-weight: 600;
+            margin-bottom: 20px;
         }
 
-        .unit-section {
-            margin-bottom: 60px;
-        }
-
-        .unit-title {
-            font-size: 1.6rem;
-            border-bottom: 3px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            color: #34495e;
-        }
-
+        /* 极简网格：不使用实线，仅靠间隔和虚线识别 */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
         }
 
+        /* 6. 卡片：Apple.com 极简科技风 */
         .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
             text-decoration: none;
             color: inherit;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: scale(1.1); /* 柔和放大 */
+            z-index: 10;
         }
 
-        .card.done {
-            border-color: var(--done-color);
-            background: #fdfdfd;
-        }
-
-        .img-placeholder {
+        /* 占位符/图片容器 */
+        .img-box {
             width: 100%;
             aspect-ratio: 1/1;
-            background: #f0f0f0;
+            background: #fff;
+            border: 1px dashed var(--border-color); /* 极细虚线 (参考图 1) */
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 12px;
-            overflow: hidden;
-            font-weight: bold;
-            color: #ccc;
-            font-size: 1.2rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+            position: relative;
         }
 
-        .img-placeholder img {
+        /* 已找到作品的卡片：实线边框，蓝色点缀 */
+        .card.done .img-box {
+            border: 1px solid var(--done-accent);
+            background: #fff;
+        }
+
+        .card img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* 保持图片比例 */
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        .art-id {
+        .card.done img { opacity: 1; }
+
+        /* "Not Yet Found" 文本：极其低调 */
+        .not-found-text {
+            font-size: 9px;
+            color: #babcbf;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+            padding: 5px;
+            position: absolute;
+        }
+        
+        .card.done .not-found-text { display: none; }
+
+        /* 卡片悬浮时的高级动态光影 */
+        .card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .card:hover::before { opacity: 1; }
+
+        /* #编号：只在卡片内部角落极其微小地显示 */
+        .art-id-tag {
+            position: absolute;
+            bottom: 3px;
+            right: 4px;
+            font-size: 8px;
             font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 5px;
+            color: var(--secondary-text);
+            font-family: "SF Mono", "Roboto Mono", Menlo, Courier, monospace;
+            opacity: 0.5;
         }
+        .card.done .art-id-tag { color: var(--done-accent); opacity: 1; }
 
-        .art-title {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        @media (max-width: 600px) {
-            h1 { font-size: 1.8rem; }
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
     </style>
 </head>
 <body>
 
-    <div class="header-section">
-        <h1>AP Art History 250</h1>
+    <div class="aura-background">
+        <div class="aura-blob aura-1"></div>
+        <div class="aura-blob aura-2"></div>
+        <div class="aura-blob aura-3"></div>
+    </div>
+
+    <div class="main-container">
+        <h1>APAH 250 Hunt</h1>
         
         <p class="description">
-            这是一个用于追踪 AP Art History 250 件核心作品复习进度的仪表盘。
-            当你为作品添加了笔记和图片后，对应的方块将会亮起。
+            My Senior year of high school, I took a class called AP Art History, taught by Ms. Ellen Powers. The curriculum was structured around 250 works of global art history, colloquially known as 'the 250'. This class left an indelible impact on me, and revealed how art history could be a powerful tool in understanding culture, world history and even human psychology. After discovering someone had made an (incomplete) <a href="#" target="_blank">map of the 250</a>, I decided to make it a life goal to see each artwork in person. The goal is not completion (that is technically impossible... thanks <i>Stone Breakers</i>), but about the journey. Each of the artworks you see in this database has a story attached to it, and finding the remaining works will surely yield better ones.<br><br>
+            I dedicate this project to the pursuit of art, the preservation of history, and the immutable strength of the human will.
         </p>
 
-        <div class="counter-box" id="counter">0 / 250</div>
-
-        <div class="progress-wrapper">
+        <div class="progress-section">
+            <div class="progress-text">
+                <span id="counter" class="highlight">0 / 250</span> Works Uncovered
+            </div>
             <div class="progress-bar-bg">
                 <div id="progressBar"></div>
             </div>
-            <div class="percent-text" id="percent">0% Completed</div>
         </div>
-    </div>
 
-    <div class="main-content" id="mainContent"></div>
+        <h2 class="overview-title">Digital Database</h2>
+
+        <div id="mainContent"></div>
+    </div>
 
     <script src="data.js"></script>
 
     <script>
-        function init() {
+        // 核心渲染逻辑：将数据转为极简 Apple 风卡片
+        function renderDatabase() {
             const container = document.getElementById('mainContent');
-            let completed = 0;
+            let foundCount = 0;
 
-            // 获取所有单元名称
-            const units = [...new Set(artworkUnitData.map(item => item.unit))];
+            // 获取 data.js 中的所有唯一单元名称 (保持顺序)
+            const unitNames = [...new Set(artworkUnitData.map(item => item.unit))];
 
-            const sectionsHtml = units.map(unitName => {
-                const artworks = artworkUnitData.filter(a => a.unit === unitName);
+            const htmlContent = unitNames.map(unitTitle => {
+                // 筛选出属于该单元的作品
+                const artworks = artworkUnitData.filter(a => a.unit === unitTitle);
+                
+                // 生成作品卡片 HTML
                 const cardsHtml = artworks.map(art => {
-                    const isDone = art.img && art.img !== "";
-                    if (isDone) completed++;
+                    // 判断标准：有 img 路径且不为空
+                    const isDone = art.img && art.img !== ""; 
+                    if (isDone) foundCount++;
+
                     return `
-                        <a href="./posts/${art.id}.html" class="card ${isDone ? 'done' : ''}">
-                            <div class="img-placeholder">
-                                ${isDone ? `<img src="${art.img}" alt="${art.title}">` : art.id}
+                        <a href="./posts/${art.id}.html" class="card ${isDone ? 'done' : ''}" title="${art.title}">
+                            <div class="img-box">
+                                <span class="not-found-text">Not Yet<br>Found</span>
+                                ${isDone ? `<img src="${art.img}" alt="${art.title}" loading="lazy">` : ''}
+                                <span class="art-id-tag">${art.id}</span>
                             </div>
-                            <div class="art-id">#${art.id}</div>
-                            <div class="art-title">${art.title}</div>
                         </a>
                     `;
                 }).join('');
 
+                // 组装单元 Section
                 return `
                     <section class="unit-section">
-                        <h2 class="unit-title">${unitName}</h2>
+                        <div class="unit-header">${unitTitle}</div>
                         <div class="grid">${cardsHtml}</div>
                     </section>
                 `;
             }).join('');
 
-            container.innerHTML = sectionsHtml;
+            // 渲染到页面
+            container.innerHTML = htmlContent;
 
-            // 更新进度条和计数器
+            // --- 动态更新进度 UI ---
             const total = artworkUnitData.length;
-            const percentage = Math.round((completed / total) * 100);
+            const percentage = Math.round((foundCount / total) * 100);
             
-            document.getElementById('counter').innerText = `${completed} / ${total}`;
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('percent').innerText = `${percentage}% 复习进度`;
+            // 1. 计数器数字
+            document.getElementById('counter').innerText = `${foundCount} / ${total}`;
+            
+            // 2. 进度条动画和彩色激活
+            const pb = document.getElementById('progressBar');
+            pb.style.width = percentage + '%';
+            
+            // 如果有进度，激活彩色动态光晕
+            if (foundCount > 0) {
+                setTimeout(() => pb.classList.add('active'), 500);
+            }
         }
 
-        window.onload = init;
+        // 确保页面加载且数据就绪后运行
+        window.onload = renderDatabase;
     </script>
 </body>
 </html>
