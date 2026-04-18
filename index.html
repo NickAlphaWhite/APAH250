@@ -3,130 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AP Art History 250 | Gallery</title>
+    <title>APAH 250 Progress</title>
     <style>
-        /* 极简主义设计系统 */
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #1d1d1f;
-            --secondary-text: #86868b;
-            --card-radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        :root { --bg: #ffffff; --text: #1d1d1f; --gray: #86868b; --accent: #000000; }
+        body { font-family: -apple-system, sans-serif; margin: 0; padding: 40px 20px; background: var(--bg); }
+        
+        /* 进度条样式 */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 8px; background: #eee; z-index: 1000; }
+        #progressBar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s; }
+        .stats { font-family: "Georgia", serif; font-style: italic; font-size: 1.2rem; margin-bottom: 30px; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
+        .container { max-width: 1100px; margin: 0 auto; }
+        .section-title { border-bottom: 1px solid #eee; padding-bottom: 10px; margin: 50px 0 25px; font-size: 1.1rem; font-weight: 600; }
+        
+        /* 紧凑型画廊网格 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+        
+        .card { text-decoration: none; color: inherit; font-size: 0.75rem; text-align: center; }
+        .img-box { 
+            width: 100%; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 4px; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: #fafafa; transition: all 0.2s;
         }
-
-        header {
-            max-width: 1200px;
-            margin: 0 auto 60px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        /* 网格排布 */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* 单个作品卡片 */
-        .artwork-card {
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-        }
-
-        .image-container {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            overflow: hidden;
-            border-radius: var(--card-radius);
-            background-color: #f5f5f7;
-        }
-
-        .artwork-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .artwork-info {
-            padding: 15px 5px;
-        }
-
-        .artwork-id {
-            font-size: 0.8rem;
-            color: var(--secondary-text);
-            margin-bottom: 5px;
-        }
-
-        .artwork-title {
-            font-size: 1rem;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        /* 悬停动效：高级感的关键 */
-        .artwork-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .artwork-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .artwork-card:hover .artwork-title {
-            color: #0071e3; /* 苹果风格的蓝色激活色 */
-        }
+        .card.done .img-box { border: none; background: #eee; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .not-found { color: #ccc; font-size: 0.6rem; padding: 10px; }
+        
+        .card:hover .img-box { transform: scale(1.05); border-color: #000; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>AP Art History 250</h1>
-    <p style="color: #86868b;">Exploring 250 Masterpieces of Global Art History</p>
-</header>
+<div class="progress-container"><div id="progressBar"></div></div>
 
-<main class="gallery-grid">
-    
-    <a href="./posts/westminster.html" class="artwork-card">
-        <div class="image-container">
-            <img src="https://images.unsplash.com/photo-1543736560-6477cc72803b?auto=format&fit=crop&q=80&w=800" alt="Palace of Westminster">
-        </div>
-        <div class="artwork-info">
-            <div class="artwork-id">#112</div>
-            <div class="artwork-title">Palace of Westminster (Houses of Parliament)</div>
-        </div>
-    </a>
+<div class="container">
+    <div class="stats" id="counter">0/250</div>
+    <h1 style="font-family: serif; font-size: 2.2rem;">Overview</h1>
 
-    <a href="./posts/kahlo.html" class="artwork-card">
-        <div class="image-container">
-            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800" alt="Frida Kahlo">
-        </div>
-        <div class="artwork-info">
-            <div class="artwork-id">#140</div>
-            <div class="artwork-title">The Two Fridas (Las dos Fridas)</div>
-        </div>
-    </a>
+    <div id="sections"></div>
+</div>
 
-    </main>
+<script>
+    // 数据示例：增加 category 字段
+    const artworks = [
+        { id: "001", title: "Apollo 11 stones", cat: "Global Prehistory", img: "" },
+        { id: "008", title: "Stonehenge", cat: "Global Prehistory", img: "https://example.com/stonehenge.jpg" },
+        { id: "028", title: "Peplos Kore", cat: "Ancient Mediterranean", img: "" },
+        { id: "112", title: "Westminster", cat: "Early Europe", img: "https://example.com/westminster.jpg" }
+    ];
 
+    const categories = [
+        "Global Prehistory", 
+        "Ancient Mediterranean", 
+        "Early Europe and Colonial Americas"
+    ];
+
+    function render() {
+        const sectionsWrap = document.getElementById('sections');
+        let completed = 0;
+
+        const html = categories.map(cat => {
+            const items = artworks.filter(a => a.cat === cat);
+            const cardsHtml = items.map(art => {
+                const isDone = art.img !== ""; // 如果有图片链接，视为已完成
+                if (isDone) completed++;
+                
+                return `
+                    <a href="./posts/${art.id}.html" class="card ${isDone ? 'done' : ''}">
+                        <div class="img-box">
+                            ${art.img ? `<img src="${art.img}">` : `<span class="not-found">Not Yet Found</span>`}
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            return `
+                <div class="section-title">${cat}</div>
+                <div class="grid">${cardsHtml}</div>
+            `;
+        }).join('');
+
+        sectionsWrap.innerHTML = html;
+        
+        // 更新进度条和数字
+        const percent = (completed / 250) * 100;
+        document.getElementById('progressBar').style.width = percent + "%";
+        document.getElementById('counter').innerText = `${completed}/250`;
+    }
+
+    render();
+</script>
 </body>
 </html>
